@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    // TODO (3) Implement onActivityResult and check that the requestCode is PLACE_PICKER_REQUEST
+    // TODO (4) In onActivityResult, use PlacePicker.getPlace to extract the Place ID and insert it into the DB
 
     // DONE (8) Implement onLocationPermissionClicked to handle the CheckBox click event
 
@@ -155,6 +157,10 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, getString(R.string.need_location_permission_message), Toast.LENGTH_LONG).show();
             return;
         }
+
+        // TODO (1) Create a PlacePicker.IntentBuilder and call startActivityForResult
+        // TODO (2) Handle GooglePlayServices exceptions
+
         Toast.makeText(this, getString(R.string.location_permissions_granted_message), Toast.LENGTH_LONG).show();
     }
 
