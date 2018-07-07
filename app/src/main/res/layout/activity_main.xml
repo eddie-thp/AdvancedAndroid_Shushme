@@ -103,6 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@color/colorPrimary"
+            android:onClick="onAddPlaceButtonClicked"
             android:text="@string/add_new_location"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="@android:color/white" />
