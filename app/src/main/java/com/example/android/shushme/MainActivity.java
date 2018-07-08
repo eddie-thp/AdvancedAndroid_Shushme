@@ -19,6 +19,7 @@ package com.example.android.shushme;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,10 +37,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -71,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements
         // Set up the recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.places_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // TODO (3) Modify the Adapter to take a PlaceBuffer in the constructor
-        mAdapter = new PlaceListAdapter(this);
+        // DONE (3) Modify the Adapter to take a PlaceBuffer in the constructor
+        mAdapter = new PlaceListAdapter(this, null);
         mRecyclerView.setAdapter(mAdapter);
 
         // DONE (4) Create a GoogleApiClient with the LocationServices API and GEO_DATA_API
@@ -88,15 +95,29 @@ public class MainActivity extends AppCompatActivity implements
                 .build();
     }
 
-    // TODO (1) Implement a method called refreshPlacesData that:
+    // DONE (1) Implement a method called refreshPlacesData that:
     // - Queries all the locally stored Places IDs
     // - Calls Places.GeoDataApi.getPlaceById with that list of IDs
     // Note: When calling Places.GeoDataApi.getPlaceById use the same GoogleApiClient created
     // in MainActivity's onCreate (you will have to declare it as a private member)
+    public void refreshPlacesData() {
+        Cursor data = getContentResolver().query(PlaceContract.PlaceEntry.CONTENT_URI, null, null, null, null);
 
-    //TODO (8) Set the getPlaceById callBack so that onResult calls the Adapter's swapPlaces with the result
+        if (data == null || data.getCount() == 0) return;
 
-    //TODO (2) call refreshPlacesData in GoogleApiClient's onConnected and in the Add New Place button click event
+        List<String> guids = new ArrayList<String>();
+        while (data.moveToNext()) {
+            guids.add(data.getString(data.getColumnIndex(PlaceContract.PlaceEntry.COLUMN_PLACE_ID)));
+        }
+        PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, guids.toArray(new String[guids.size()]));
+        // DONE (8) Set the getPlaceById callBack so that onResult calls the Adapter's swapPlaces with the result
+        placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+            @Override
+            public void onResult(@NonNull PlaceBuffer places) {
+                mAdapter.swapPlaces(places);
+            }
+        });
+    }
 
     // DONE (5) Override onConnected, onConnectionSuspended and onConnectionFailed for GoogleApiClient
 
@@ -108,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "onConnected");
+        // DONE (2) call refreshPlacesData in GoogleApiClient's onConnected and in the Add New Place button click event
+        refreshPlacesData();
     }
 
     /***
@@ -172,6 +195,8 @@ public class MainActivity extends AppCompatActivity implements
             ContentValues contentValues = new ContentValues();
             contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID);
             getContentResolver().insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues);
+
+            refreshPlacesData();
         }
     }
 
