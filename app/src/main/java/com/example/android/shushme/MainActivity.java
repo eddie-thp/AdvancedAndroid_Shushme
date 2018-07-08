@@ -205,7 +205,12 @@ public class MainActivity extends AppCompatActivity implements
             locationPermissions.setChecked(true);
             locationPermissions.setEnabled(false);
         }
+
+
+        //TODO (3) Initialize ringer permissions checkbox
     }
+
+    // TODO (2) Implement onRingerPermissionsClicked to launch ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS
 
     // DONE (3) Implement onActivityResult and check that the requestCode is PLACE_PICKER_REQUEST
     // DONE (4) In onActivityResult, use PlacePicker.getPlace to extract the Place ID and insert it into the DB
