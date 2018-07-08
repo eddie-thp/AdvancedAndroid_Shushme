@@ -12,7 +12,7 @@
         <!-- DONE (1) Add meta-data tag with API key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="insert-your-api-key-here" />
+            android:value="AIzaSyC5B40G9oHhON6bbgUG5hD_FTBDuu2zCbo" />
 
         <activity android:name="com.example.android.shushme.MainActivity">
             <intent-filter>
@@ -25,6 +25,8 @@
             android:name="com.example.android.shushme.provider.PlaceContentProvider"
             android:authorities="com.example.android.shushme"
             android:exported="false"/>
+
+        <receiver android:name=".GeofenceBroadcastReceiver" />
 
     </application>
 
